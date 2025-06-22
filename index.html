@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Resham - With Love</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            z-index: 1;
+        }
+        
+        .video-background {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            display: none;
+        }
+        
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+        
+        .profile-pic {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ff6b81;
+            box-shadow: 0 0 30px rgba(255, 107, 129, 0.7);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        
+        h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 3.5rem;
+            margin: 20px 0 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            color: #ff6b81;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+            padding: 0 20px;
+        }
+        
+        .btns-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .msg-btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .yes-btn {
+            background-color: #ff6b81;
+            color: white;
+        }
+        
+        .yes-btn:hover {
+            background-color: #ff4757;
+            transform: scale(1.05);
+        }
+        
+        .no-btn {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .no-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 129, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 107, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 129, 0); }
+        }
+        
+        .love-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .love-message.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .love-message h2 {
+            font-family: 'Pacifico', cursive;
+            color: #ff6b81;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .love-message p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="videoBG" class="video-background" 
+            src="https://www.youtube.com/embed/8of5w7RgcTc?autoplay=1&mute=0&controls=0&loop=1&playlist=8of5w7RgcTc"
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+    </iframe>
+    
+    <section class="hero-section">
+        <div class="overlay"></div>
+        
+        <img src="https://i.ibb.co/7xsyxH20/8b4397e3-a0ca-4cfd-a54b-593208fa3a56.png" 
+             alt="Resham" class="profile-pic" id="profilePic">
+        
+        <h1>For Resham</h1>
+        <p class="subtitle">This special message is just for you. Would you like to see it?</p>
+        
+        <div class="btns-container">
+            <button class="msg-btn yes-btn" id="yesBtn">Yes, Show Me ❤️</button>
+            <button class="msg-btn no-btn" id="noBtn">No Thanks</button>
+        </div>
+    </section>
+    
+    <div class="love-message" id="loveMessage">
+        <h2>For Someone Special</h2>
+        <p>
+            Every moment with you feels like a beautiful dream. Your smile brightens my darkest days, 
+            and your presence fills my heart with joy. I just wanted to remind you how special you are 
+            and how much you mean to me. This song is for you because it reminds me of us.
+        </p>
+        <p>
+            You're always in my thoughts, Resham. Always and forever.
+        </p>
+        <button class="msg-btn yes-btn" id="closeMessage">Close</button>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            const videoBG = document.getElementById('videoBG');
+            const loveMessage = document.getElementById('loveMessage');
+            const closeMessage = document.getElementById('closeMessage');
+
+            // API endpoint and key
+            const API_ENDPOINT = 'YOUR_API_ENDPOINT_HERE'; // Replace with your actual API endpoint
+            const API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
+
+            // Function to send click data to the API
+            async function sendClickData(buttonClicked) {
+                const data = {
+                    event: 'button_click',
+                    button: buttonClicked,
+                    timestamp: new Date().toISOString(),
+                };
+
+                try {
+                    const response = await fetch(API_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${API_KEY}` // Use template literals for string interpolation
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        console.log(`Click data sent successfully for: ${buttonClicked}`);
+                    } else {
+                        console.error(`Failed to send click data for: ${buttonClicked}, ${response.status}, ${response.statusText}`);
+                    }
+                } catch (error) {
+                    console.error(`Error sending click data for: ${buttonClicked}, ${error}`);
+                }
+            }
+            
+            // Handle Yes button click
+            yesBtn.addEventListener('click', function() {
+                sendClickData('yes_clicked'); // Send data for yes button
+
+                // Show the video background
+                videoBG.style.display = 'block';
+                document.querySelector('.overlay').style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                
+                // Hide the buttons
+                yesBtn.classList.add('hidden');
+                noBtn.classList.add('hidden');
+                
+                // Show the love message
+                setTimeout(() => {
+                    loveMessage.classList.add('show');
+                }, 1000);
+            });
+            
+            // Handle No button click
+            noBtn.addEventListener('click', function() {
+                sendClickData('no_clicked'); // Send data for no button
+
+                // Keep the background dark without video
+                document.querySelector('.subtitle').textContent = "Thank you for visiting. You're always in my heart.";
+                
+                // Hide the buttons
+                yesBtn.classList.add('hidden');
+                noBtn.classList.add('hidden');
+            });
+            
+            // Close message button
+            closeMessage.addEventListener('click', function() {
+                loveMessage.classList.remove('show');
+            });
+            
+            // Mobile-friendly video handling
+            function adjustVideoSize() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                
+                // Adjust video size based on aspect ratio
+                if (width/height > 16/9) {
+                    videoBG.style.width = '100%';
+                    videoBG.style.height = 'auto';
+                } else {
+                    videoBG.style.width = 'auto';
+                    videoBG.style.height = '100%';
+                }
+            }
+            
+            // Initial adjustment and on resize
+            adjustVideoSize();
+            window.addEventListener('resize', adjustVideoSize);
+            
+            // For browsers that block autoplay, we need to handle it differently
+            function handleVideoPlay() {
+                if (videoBG.style.display === 'block' && videoBG.src.indexOf('autoplay=1') !== -1) {
+                    videoBG.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                }
+            }
+            
+            // Post message to play video after a short delay
+            setTimeout(handleVideoPlay, 1000);
+        });
+    </script>
+</body>
+</html>
