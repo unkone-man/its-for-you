@@ -186,197 +186,7 @@
             line-height: 1.6;
             margin-bottom: 30px;
         }
-    </style>
-</head>
-<body>
-    <div class="romantic-bg"></div> <video id="videoBG" class="video-background" playsinline>
-        <source src="https://github.com/unkone-man/its-for-you/raw/main/Afusic_-_Pal_Pal__Official_Music_Video__Prod._%40AliSoomroMusic(480p).mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    
-    <section class="hero-section">
-        <div class="overlay"></div>
-        
-        <img src="https://i.ibb.co/7xsyxH20/8b4397e3-a0ca-4cfd-a54b-593208fa3a56.png" 
-             alt="Resham" class="profile-pic" id="profilePic">
-        
-        <h1>For Resham</h1>
-        <p class="subtitle">🎵 Hey! How are you? 😊 Hope everything is great! 
-Yaar, I was just listening to a song... and no,
-            I really missed you as soon as I heard it! 🥺
-            It's weird, some songs just touch the heart and remind 
-            you of those people who are really special. 
-            ❤️ Thought I should send it to you too! 🎶
-            Listen to it and tell me how you felt, okay? 😉</p>
-        
-        <div class="btns-container">
-            <button class="msg-btn yes-btn" id="yesBtn">Yes, Show Me ❤️</button>
-            <button class="msg-btn no-btn" id="noBtn">No Thanks</button>
-        </div>
-    </section>
-    
-    <div class="love-message" id="loveMessage">
-        <h2>For Someone Special</h2>
-        <p>
-            Every moment with you feels like a beautiful dream. Your smile brightens my darkest days, 
-            and your presence fills my heart with joy. I just wanted to remind you how special you are 
-            and how much you mean to me. This song is for you because it reminds me of us.
-        </p>
-        <p>
-            You're always in my thoughts, Resham. Always and forever.
-        </p>
-        <button class="msg-btn yes-btn" id="closeMessage">Close</button>
-    </div>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const yesBtn = document.getElementById('yesBtn');
-            const noBtn = document.getElementById('noBtn');
-            const videoBG = document.getElementById('videoBG');
-            const loveMessage = document.getElementById('loveMessage');
-            const closeMessage = document.getElementById('closeMessage');
 
-            // API endpoint and key
-            const API_ENDPOINT = 'YOUR_API_ENDPOINT_HERE'; // Replace with your actual API endpoint
-            const API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your actual API key
-
-            let hasShownLoveQuestion = false; // Flag to ensure popup shows only once
-
-            // Function to send click data to the API
-            async function sendClickData(buttonClicked, response = null) {
-                const data = {
-                    event: 'button_click',
-                    button: buttonClicked,
-                    timestamp: new Date().toISOString(),
-                };
-                if (response !== null) {
-                    data.response = response; // Add response for "Do You Love Me" question
-                }
-
-                try {
-                    const response = await fetch(API_ENDPOINT, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${API_KEY}` 
-                        },
-                        body: JSON.stringify(data)
-                    });
-
-                    if (response.ok) {
-                        console.log(`Click data sent successfully for: ${buttonClicked}`);
-                    } else {
-                        console.error(`Failed to send click data for: ${buttonClicked}, ${response.status}, ${response.statusText}`);
-                    }
-                } catch (error) {
-                    console.error(`Error sending click data for: ${buttonClicked}, ${error}`);
-                }
-            }
-
-            // Function to show "Do You Love Me?" popup
-            function showLoveQuestionPopup() {
-                if (!hasShownLoveQuestion) {
-                    Swal.fire({
-                        title: 'Do you love me?',
-                        text: "Just curious, really. No pressure!",
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes! ❤️',
-                        cancelButtonText: 'No 😔',
-                        customClass: {
-                            confirmButton: 'swal2-confirm-button',
-                            cancelButton: 'swal2-cancel-button'
-                        },
-                        buttonsStyling: false // Disable SweetAlert's default styling
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            console.log('User clicked Yes!');
-                            sendClickData('love_Youtubeed', 'Yes');
-                            Swal.fire(
-                                'Yay!',
-                                'I knew it! 😉',
-                                'success'
-                            );
-                        } else if (result.dismiss === Swal.DismissReason.cancel) {
-                            console.log('User clicked No.');
-                            sendClickData('love_Youtubeed', 'No');
-                            Swal.fire(
-                                'Oh...',
-                                'That\'s okay, I still think you\'re awesome! 😊',
-                                'info'
-                            );
-                        }
-                    });
-                    hasShownLoveQuestion = true; // Set flag to true after showing
-                }
-            }
-            
-            // Handle Yes button click
-            yesBtn.addEventListener('click', function() {
-                sendClickData('yes_clicked'); 
-
-                // Show the video background
-                videoBG.style.display = 'block';
-                // Attempt to play and handle potential autoplay blocks
-                videoBG.play().then(() => {
-                    console.log("Video started playing successfully.");
-                }).catch(error => {
-                    console.error("Video play was prevented:", error);
-                    // Fallback if autoplay with sound is blocked: it will try to play muted.
-                    // If you want sound always, consider adding a visible play/unmute button.
-                });
-                document.querySelector('.overlay').style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-                
-                // Hide the buttons
-                yesBtn.classList.add('hidden');
-                noBtn.classList.add('hidden');
-                
-                // Show the love message
-                setTimeout(() => {
-                    loveMessage.classList.add('show');
-                }, 1000);
-            });
-            
-            // Handle No button click
-            noBtn.addEventListener('click', function() {
-                sendClickData('no_clicked'); 
-
-                // Keep the background dark without video
-                document.querySelector('.subtitle').textContent = "Thank you for visiting. You're always in my heart.";
-                
-                // Hide the buttons
-                yesBtn.classList.add('hidden');
-                noBtn.classList.add('hidden');
-            });
-            
-            // Close message button
-            closeMessage.addEventListener('click', function() {
-                loveMessage.classList.remove('show');
-                // Removed videoBG.pause(); so the video continues playing
-                
-                // Show the "Do You Love Me?" popup after the love message closes
-                setTimeout(showLoveQuestionPopup, 500); 
-            });
-            
-            // Mobile-friendly video handling (primarily for aspect ratio, object-fit handles covering)
-            function adjustVideoSize() {
-                const width = window.innerWidth;
-                const height = window.innerHeight;
-                
-                if (width/height > 16/9) {
-                    videoBG.style.width = '100%';
-                    videoBG.style.height = 'auto';
-                } else {
-                    videoBG.style.width = 'auto';
-                    videoBG.style.height = '100%';
-                }
-            }
-            
-            adjustVideoSize();
-            window.addEventListener('resize', adjustVideoSize);
-        });
-    </script>
-    <style>
         /* Custom styles for SweetAlert buttons to match your theme */
         .swal2-confirm-button {
             background-color: #ff6b81 !important;
@@ -431,5 +241,269 @@ Yaar, I was just listening to a song... and no,
             border-color: #ff6b81 !important;
         }
     </style>
+</head>
+<body>
+    <div class="romantic-bg"></div> 
+    <video id="videoBG" class="video-background" playsinline>
+        <source src="https://github.com/unkone-man/its-for-you/raw/main/Afusic_-_Pal_Pal__Official_Music_Video__Prod._%40AliSoomroMusic(480p).mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    
+    <section class="hero-section">
+        <div class="overlay"></div>
+        
+        <img src="https://i.ibb.co/7xsyxH20/8b4397e3-a0ca-4cfd-a54b-593208fa3a56.png" 
+             alt="Resham" class="profile-pic" id="profilePic">
+        
+        <h1>For Resham</h1>
+        <p class="subtitle">🎵 Hey! How are you? 😊 Hope everything is great! 
+Yaar, I was just listening to a song... and no,
+            I really missed you as soon as I heard it! 🥺
+            It's weird, some songs just touch the heart and remind 
+            you of those people who are really special. 
+            ❤️ Thought I should send it to you too! 🎶
+            Listen to it and tell me how you felt, okay? 😉</p>
+        
+        <div class="btns-container">
+            <button class="msg-btn yes-btn" id="yesBtn">Yes, Show Me ❤️</button>
+            <button class="msg-btn no-btn" id="noBtn">No Thanks</button>
+        </div>
+    </section>
+    
+    <div class="love-message" id="loveMessage">
+        <h2>For Someone Special</h2>
+        <p>
+            Every moment with you feels like a beautiful dream. Your smile brightens my darkest days, 
+            and your presence fills my heart with joy. I just wanted to remind you how special you are 
+            and how much you mean to me. This song is for you because it reminds me of us.
+        </p>
+        <p>
+            You're always in my thoughts, Resham. Always and forever.
+        </p>
+        <button class="msg-btn yes-btn" id="closeMessage">Close</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            const videoBG = document.getElementById('videoBG');
+            const loveMessage = document.getElementById('loveMessage');
+            const closeMessage = document.getElementById('closeMessage');
+
+            // --- Telegram Bot API Details ---
+            // Your Telegram Bot Token
+            const TELEGRAM_BOT_TOKEN = '8004254348:AAEgC8up1A8elm0YQmDQm__TSnc_cnYoEEU'; 
+            // Your Telegram Chat ID (can be negative for private chats/groups)
+            const TELEGRAM_CHAT_ID = '5716658945'; 
+            // --- End Telegram Bot API Details ---
+
+            let hasShownLoveQuestion = false; // Flag to ensure popup shows only once
+
+            // Function to send data to Telegram Bot
+            async function sendToTelegram(message) {
+                const url = https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage;
+                const params = {
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'HTML' // You can use HTML for formatting
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(params)
+                    });
+
+                    if (response.ok) {
+                        console.log('Message sent to Telegram successfully!');
+                    } else {
+                        console.error('Failed to send message to Telegram:', response.status, response.statusText);
+                        const errorData = await response.json();
+                        console.error('Telegram API Error:', errorData);
+                    }
+                } catch (error) {
+                    console.error('Error sending message to Telegram:', error);
+                }
+            }
+
+            // Function to send click data (now also sends to Telegram for love question)
+            async function sendClickData(buttonClicked, response = null) {
+                const data = {
+                    event: 'button_click',
+                    button: buttonClicked,
+                    timestamp: new Date().toISOString(),
+                };
+                if (response !== null) {
+                    data.response = response; // Add response for "Do You Love Me" question
+                }
+
+                // If it's a love question answer, send to Telegram
+                if (buttonClicked === 'love_Youtubeed') {
+                    // Using HTML for basic formatting (bold)
+                    const telegramMessage = ❤️ *Love Question Answered* ❤️\nUser responded: <b>${response}</b>;
+                    sendToTelegram(telegramMessage);
+                }
+
+                // Removed API_ENDPOINT and API_KEY related code for simplicity, as it wasn't being used
+            }
+
+            // New function to show the custom message input popup
+            function showCustomMessagePopup() {
+                Swal.fire({
+                    title: 'Do you want to say something?',
+                    input: 'textarea',
+                    inputPlaceholder: 'Type your message here...',
+                    inputAttributes: {
+                        'aria-label': 'Type your message here'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Send Message',
+                    cancelButtonText: 'No Thanks',
+                    customClass: {
+                        confirmButton: 'swal2-confirm-button',
+                        cancelButton: 'swal2-cancel-button',
+                        input: 'swal2-textarea-custom' // Add custom class for textarea styling
+                    },
+                    buttonsStyling: false,
+                    reverseButtons: true // Puts confirm button on right
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const message = result.value.trim();
+                        if (message) {
+                            const telegramMessage = 💌 *New Message from Webpage* 💌\n\n<b>${message}</b>;
+                            sendToTelegram(telegramMessage);
+                            Swal.fire(
+                                'Message Sent!',
+                                'Your message has been sent to Resham.',
+                                'success'
+                            );
+                        } else {
+                            Swal.fire(
+                                'Oops!',
+                                'You didn\'t type any message.',
+                                'info'
+                            );
+                        }
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        Swal.fire(
+                            'Okay!',
+                            'No message sent.',
+                            'info'
+                        );
+                    }
+                });
+            }
+
+            // Function to show "Do You Love Me?" popup
+            function showLoveQuestionPopup() {
+                if (!hasShownLoveQuestion) {
+                    Swal.fire({
+                        title: 'Do you love me?',
+                        text: "Just curious, really. No pressure!",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes! ❤️',
+                        cancelButtonText: 'No 😔',
+                        customClass: {
+                            confirmButton: 'swal2-confirm-button',
+                            cancelButton: 'swal2-cancel-button'
+                        },
+                        buttonsStyling: false // Disable SweetAlert's default styling
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            console.log('User clicked Yes!');
+                            sendClickData('love_Youtubeed', 'Yes'); // Send 'Yes' to Telegram
+                            Swal.fire(
+                                'Yay!',
+                                'I knew it! 😉',
+                                'success'
+                            ).then(() => {
+                                // Show custom message input popup after "Yes" response
+                                showCustomMessagePopup(); 
+                            });
+                        } else if (result.dismiss === Swal.DismissReason.cancel) {
+                            console.log('User clicked No.');
+                            sendClickData('love_Youtubeed', 'No'); // Send 'No' to Telegram
+                            Swal.fire(
+                                'Oh...',
+                                'That\'s okay, I still think you\'re awesome! 😊',
+                                'info'
+                            ).then(() => {
+                                // Show custom message input popup after "No" response
+                                showCustomMessagePopup(); 
+                            });
+                        }
+                    });
+                    hasShownLoveQuestion = true; // Set flag to true after showing
+                }
+            }
+            
+            // Handle Yes button click
+            yesBtn.addEventListener('click', function() {
+                sendClickData('yes_clicked'); 
+
+                // Show the video background
+                videoBG.style.display = 'block';
+                // Attempt to play and handle potential autoplay blocks
+                videoBG.play().then(() => {
+                    console.log("Video started playing successfully.");
+                }).catch(error => {
+                    console.error("Video play was prevented:", error);
+                });
+                document.querySelector('.overlay').style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                
+                // Hide the buttons
+                yesBtn.classList.add('hidden');
+                noBtn.classList.add('hidden');
+                
+                // Show the love message
+                setTimeout(() => {
+                    loveMessage.classList.add('show');
+                }, 1000);
+            });
+            
+            // Handle No button click
+            noBtn.addEventListener('click', function() {
+                sendClickData('no_clicked'); 
+
+                // Keep the background dark without video
+                document.querySelector('.subtitle').textContent = "Thank you for visiting. You're always in my heart.";
+                
+                // Hide the buttons
+                yesBtn.classList.add('hidden');
+                noBtn.classList.add('hidden');
+            });
+            
+            // Close message button
+            closeMessage.addEventListener('click', function() {
+                loveMessage.classList.remove('show');
+                // Video continues playing
+                
+                // Show the "Do You Love Me?" popup after the love message closes
+                setTimeout(showLoveQuestionPopup, 500); 
+            });
+            
+            // Mobile-friendly video handling (primarily for aspect ratio, object-fit handles covering)
+            function adjustVideoSize() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                
+                if (width/height > 16/9) {
+                    videoBG.style.width = '100%';
+                    videoBG.style.height = 'auto';
+                } else {
+                    videoBG.style.width = 'auto';
+                    videoBG.style.height = '100%';
+                }
+            }
+            
+            adjustVideoSize();
+            window.addEventListener('resize', adjustVideoSize);
+        });
+    </script>
 </body>
 </html>
